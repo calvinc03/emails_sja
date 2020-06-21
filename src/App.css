@@ -1,0 +1,55 @@
+.title {
+  margin-top: 50px;
+}
+
+/* Hompage css */
+.homepage {
+  margin-top: 60px;
+}
+
+.btn-add-mem {
+  margin-bottom: 15px;
+}
+
+.table {
+  margin-bottom: 30px;
+}
+
+/* AddMemper css */
+.new-member-page {
+  margin-top: 50px;
+}
+
+form {
+  max-width: 600px;
+  margin-top: 50px;
+  position: relative;
+}
+
+.outline-bad {
+  border-color: #dc3545 !important;
+}
+
+.outline-bad:focus {
+  box-shadow: 0 0 0 0.2rem #dd8b93 !important;
+}
+
+.my-form-text {
+  display: none;
+  color: #dc3545;
+}
+
+.btn {
+  margin-right: 10px;
+}
+
+.my-spinner {
+  display: none;
+  width: 2rem;
+  height: 2rem;
+  border: .25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  margin-top: 20px;
+  animation: spinner-border .75s linear infinite;
+}
