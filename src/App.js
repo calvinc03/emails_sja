@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import AddMember from './pages/AddMember';
 import Homepage from './pages/Homepage';
+import EditMember from './pages/EditMember';
 
 class App extends Component {
 
@@ -14,6 +15,7 @@ class App extends Component {
           <Switch>
             <Route path="/" exact component={Homepage} />
             <Route path="/new" exact component={AddMember} />
+            <Route path="/edit" exact component={EditMember} />
             {/* <Route path="/new" exact component={AddMember} />
             <Route path="/new" exact component={AddMember} /> */}
           </Switch>

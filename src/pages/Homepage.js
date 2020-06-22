@@ -57,7 +57,9 @@ class Homepage extends Component {
   render() {
     return (
         <div className="homepage">
-          <Link to="/new"><button type="button" className="btn btn-info btn-add-mem">Add Member</button></Link>
+          <Link to="/new" className="btn btn-info">Add</Link>
+          <Link to="/edit" className="btn btn-warning">Edit</Link>
+          <Link to="/delete" className="btn btn-danger">Delete</Link>
           <h2>Juniors</h2>
           <Spinner animation="border" id="juniors-spinner" role="status">
             <span className="sr-only">Loading...</span>
