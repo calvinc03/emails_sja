@@ -14,7 +14,7 @@ class AddMember extends Component {
     postMember() {
         var name = document.getElementById("inputName").value;
         var email = document.getElementById("inputEmail").value;
-        var group = document.getElementById("inputGroup").value;
+        var group = document.getElementById("add-group").value;
         
         if (!/\S/.test(name)) {
             document.getElementById("nameError").style.display='block';
@@ -33,7 +33,7 @@ class AddMember extends Component {
             return
         }
         
-        group = group.toLowerCase().replace(' ', '_') + 's'
+        group = group.toLowerCase().replace(' ', '_')
         
         var request = new XMLHttpRequest();
         request.open('POST', 'https://sjarestapi.herokuapp.com/member/new', true);
@@ -46,6 +46,8 @@ class AddMember extends Component {
 
                 if ('error' in JSON.parse(request.responseText)) {
                     document.getElementById("nameUsed").style.display='block';
+                    console.log(JSON.parse(request.responseText['error']));
+
                     this.setState({
                         validName: false
                     });
@@ -60,7 +62,9 @@ class AddMember extends Component {
         document.getElementById('cancel-button').style.pointerEvents ='none';
 
         request.setRequestHeader("Content-Type", "application/json");
-        request.send(JSON.stringify({name: name, email: email, group: group}));
+        
+        console.log(JSON.stringify({group: group, members: [[name, email]], length: 1}));
+        request.send(JSON.stringify({group: group, members: [[name, email]], length: 1}));
     }
 
     updateValidity(type) {
@@ -92,12 +96,26 @@ class AddMember extends Component {
         }
     }
 
+    addForm() {
+        // var form = document.getElementById("form");
+        // var name = document.createElement("div");
+        // name.setAttribute("className", "form-group");
+
+    }
+
     render() {
         const { validName, validEmail } = this.state;
         return (
             <div className="new-member-page">
                 <h2 className="new-header">New Member</h2>
-                <form>
+                <form id="form">
+                    <select className="form-control" id='add-group'>
+                        <option>Juniors</option>
+                        <option>Cadet Twos</option>
+                        <option>Cadet Ones</option>
+                        <option>Crusaders</option>
+                        <option>Leaders</option>
+                    </select>
                     <div className="form-group">
                         <label htmlFor="inputName">Name</label>
                         <input 
@@ -123,20 +141,12 @@ class AddMember extends Component {
                             onBlur={() => this.updateValidity('email')}></input>
                         <small id="emailError" className="my-form-text">Enter a valid email address</small>
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="inputGroup">Group</label>
-                        <select className="form-control" id="inputGroup">
-                            <option>Junior</option>
-                            <option>Cadet Two</option>
-                            <option>Cadet One</option>
-                            <option>Crusader</option>
-                            <option>Leader</option>
-                        </select>
-                    </div>
-                    <div className="btn btn-primary" id="submit-button" onClick={() => this.postMember()}>Submit</div>
-                    <Link className="btn btn-light" id="cancel-button" to="/">Cancel</Link>
-                    <div className="my-spinner" id="add-mem-spinner"></div>
                 </form>
+                {/* <img className="add-img" src="https://img.icons8.com/material-outlined/64/000000/plus.png" onClick={() => this.addForm()}/> */}
+                <div className="btn btn-primary" id="submit-button" onClick={() => this.postMember()}>Submit</div>
+                <Link className="btn btn-light" id="cancel-button" to="/">Cancel</Link>
+                <div className="my-spinner" id="add-mem-spinner"></div>
+                
             </div> 
         );
     }

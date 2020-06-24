@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import AddMember from './pages/AddMember';
 import Homepage from './pages/Homepage';
 import EditMember from './pages/EditMember';
+import DeleteMember from './pages/DeleteMember';
+import AddColumn from './pages/AddColumn';
+import DeleteColumn from './pages/DeleteColumn'
 
 class App extends Component {
 
@@ -16,8 +19,9 @@ class App extends Component {
             <Route path="/" exact component={Homepage} />
             <Route path="/new" exact component={AddMember} />
             <Route path="/edit" exact component={EditMember} />
-            {/* <Route path="/new" exact component={AddMember} />
-            <Route path="/new" exact component={AddMember} /> */}
+            <Route path="/delete" exact component={DeleteMember} />
+            <Route path="/column/add" exact component={AddColumn} />
+            <Route path="/column/delete" exact component={DeleteColumn} />
           </Switch>
         </Router>
       </div>

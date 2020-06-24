@@ -46,9 +46,8 @@ class Homepage extends Component {
             }
             bodyhtml += row + '</tr>'
             num += 1
-      }
-      tablebody.innerHTML = bodyhtml;
-
+          }
+          tablebody.innerHTML = bodyhtml;
         }
       }
       BodyRequest.send();
@@ -60,6 +59,9 @@ class Homepage extends Component {
           <Link to="/new" className="btn btn-info">Add</Link>
           <Link to="/edit" className="btn btn-warning">Edit</Link>
           <Link to="/delete" className="btn btn-danger">Delete</Link>
+
+          <Link to="/column/delete" className="btn btn-danger columns">Delete Column</Link>
+          <Link to="/column/add" className="btn btn-success columns">Add Column</Link> 
           <h2>Juniors</h2>
           <Spinner animation="border" id="juniors-spinner" role="status">
             <span className="sr-only">Loading...</span>
