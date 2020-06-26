@@ -20,12 +20,8 @@ class AddColumn extends Component {
             });
             return
         }
-        var groups = []
-        if (document.getElementById("juniors-check").checked) groups.push("juniors");
-        if (document.getElementById("cadet_twos-check").checked) groups.push("cadet_twos");
-        if (document.getElementById("cadet_ones-check").checked) groups.push("cadet_ones");
-        if (document.getElementById("crusaders-check").checked) groups.push("crusaders");
-        if (document.getElementById("leaders-check").checked) groups.push("leaders");
+        
+        name = name.replace(" ", "_");
         
         var request = new XMLHttpRequest();
         request.open('POST', 'https://sjarestapi.herokuapp.com/column/new', true);
@@ -55,8 +51,7 @@ class AddColumn extends Component {
 
         request.setRequestHeader("Content-Type", "application/json");
         
-        console.log(JSON.stringify({column: name, groups: groups}));
-        request.send(JSON.stringify({column: name, groups: groups}));
+        request.send(JSON.stringify({columns: [name]}));
     }
 
     updateValidity() {
@@ -87,8 +82,8 @@ class AddColumn extends Component {
             <div className="new-member-page">
                 <h2 className="new-header">Add Column</h2>
                 <form id="form">
-                    <div className="form-group">
-                        <label htmlFor="inputColumn">Column</label>
+                    <label className="">Column</label>
+                    <div className="form-group half-length">
                         <input 
                             type="text" 
                             autoComplete="off"
@@ -99,26 +94,6 @@ class AddColumn extends Component {
                             onBlur={() => this.updateValidity()}></input>
                         <small id="nameError" className="my-form-text">Enter a valid column name</small>
                         <small id="nameUsed" className="my-form-text">This column already exists</small>
-                    </div>
-                    <div className="form-group form-check">
-                        <input type="checkbox" className="form-check-input" id="juniors-check" />
-                        <label className="form-check-label" htmlFor="juniors-check">Juniors</label>
-                    </div>
-                    <div className="form-group form-check">
-                        <input type="checkbox" className="form-check-input" id="cadet_twos-check" />
-                        <label className="form-check-label" htmlFor="cadet_twos-check">Cadet 2s</label>
-                    </div>
-                    <div className="form-group form-check">
-                        <input type="checkbox" className="form-check-input" id="cadet_ones-check" />
-                        <label className="form-check-label" htmlFor="cadet_ones-check">Cadet 1s</label>
-                    </div>
-                    <div className="form-group form-check">
-                        <input type="checkbox" className="form-check-input" id="crusaders-check" />
-                        <label className="form-check-label" htmlFor="crusaders-check">Crusaders</label>
-                    </div>
-                    <div className="form-group form-check">
-                        <input type="checkbox" className="form-check-input" id="leaders-check" />
-                        <label className="form-check-label" htmlFor="leaders-check">Leaders</label>
                     </div>
                 </form>
                 {/* <img className="add-img" src="https://img.icons8.com/material-outlined/64/000000/plus.png" onClick={() => this.addForm()}/> */}

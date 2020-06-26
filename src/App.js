@@ -6,7 +6,8 @@ import Homepage from './pages/Homepage';
 import EditMember from './pages/EditMember';
 import DeleteMember from './pages/DeleteMember';
 import AddColumn from './pages/AddColumn';
-import DeleteColumn from './pages/DeleteColumn'
+import DeleteColumn from './pages/DeleteColumn';
+import SendEmail from './pages/SendEmail';
 
 class App extends Component {
 
@@ -22,6 +23,7 @@ class App extends Component {
             <Route path="/delete" exact component={DeleteMember} />
             <Route path="/column/add" exact component={AddColumn} />
             <Route path="/column/delete" exact component={DeleteColumn} />
+            <Route path="/email" exact component={SendEmail} />
           </Switch>
         </Router>
       </div>

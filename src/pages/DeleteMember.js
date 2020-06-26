@@ -1,49 +1,36 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-var tableData = {}
-
 class DeleteMember extends Component {
     
 
     componentDidMount() {
-        this.loadTableData('juniors');
+        this.loadTableData();
     }
 
-
-    updateTable() {
-        var group = document.getElementById('delete-group').value;
-        group = group.toLowerCase().replace(' ', '_');
-        if (group in tableData) {
-            document.getElementById('delete-table').innerHTML = tableData[group];
-        } else {
-            this.loadTableData(group);
-        }
-    }
-
-    async loadTableData(group) {
+    async loadTableData() {
         var displayTable = document.getElementById('delete-table');
         displayTable.innerHTML = '';
-        tableData[group] = '';
 
         var HeaderRequest = new XMLHttpRequest();
-        HeaderRequest.open('GET', `https://sjarestapi.herokuapp.com/table?group=${group}`, true);
+        HeaderRequest.open('GET', `https://sjarestapi.herokuapp.com/table`, true);
         HeaderRequest.onreadystatechange = function() {
             if (HeaderRequest.readyState === XMLHttpRequest.DONE) {
                 var headers = JSON.parse(HeaderRequest.responseText)['table'];
-                var headerhtml = '<thead><tr><th scope="col"></th>';
-                for (var i in headers) {
-                    headerhtml += `<th scope="col">${headers[i]}</th>`;
-                }
-                headerhtml += '</tr></thead>';
-                displayTable.innerHTML += headerhtml;
-                tableData[group] += headerhtml;
+                displayTable.innerHTML += `<thead>
+                                                <tr>
+                                                    <th scope="col">Select</th>
+                                                    <th scope="col">${headers[0].replace("_", " ")}</th>
+                                                    <th scope="col">${headers[1].replace("_", " ")}</th>
+                                                    <th scope="col">${headers[2].replace("_", " ")}</th>
+                                                </tr>
+                                            </thead>`;
             }
         }
         HeaderRequest.send();
 
         var BodyRequest = new XMLHttpRequest();
-        BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all?group=${group}`, true);
+        BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all`, true);
         BodyRequest.onreadystatechange = function() {
             if (BodyRequest.readyState === XMLHttpRequest.DONE) {
                 var data = JSON.parse(BodyRequest.responseText)['members'];
@@ -52,25 +39,23 @@ class DeleteMember extends Component {
                     var row = `<tr>
                                     <th scope="row">
                                         <div className="form-group form-check">
-                                            <input type="checkbox" class="form-check-input" id="checkbox-${j}">
+                                            <input type="checkbox" className="form-check-input-table" id="checkbox-${j}">
                                         </div>
-                                    </th>`
-                    for (var k in data[j]) {
-                        row += `<td id="name-${j}">${data[j][k]}</td>`;
-                    }
-                bodyhtml += row + '</tr>';
+                                    </th>
+                                    <th id="name-${j}">${data[j][0]}</th>
+                                    <td>${data[j][1]}</td>
+                                    <td id="name-${j}">${data[j][2]}</td>
+                                </tr>`
+                bodyhtml += row;
             }
             bodyhtml += '</tbody>'
             displayTable.innerHTML += bodyhtml;
-            tableData[group] += bodyhtml;
             }
         }
         BodyRequest.send();
     }
 
     deleteMembers() {
-        var group = document.getElementById('delete-group').value;
-        group = group.toLowerCase().replace(' ', '_');
 
         var submitData = [];
         
@@ -93,7 +78,6 @@ class DeleteMember extends Component {
                     alert(JSON.parse(xhr.responseText)['error']);
                     return
                 }
-
                 window.location.replace("/");
             }
         }
@@ -101,19 +85,12 @@ class DeleteMember extends Component {
         document.getElementById('delete-button').style.pointerEvents='none';
         document.getElementById('delete-cancel-button').style.pointerEvents ='none';
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({group: group, members: submitData, length: submitData.length}));
+        xhr.send(JSON.stringify({members: submitData, length: submitData.length}));
     }
 
     render() {
         return (
             <div className="homepage">
-                <select className="form-control" onChange={() => this.updateTable()} id='delete-group'>
-                    <option>Juniors</option>
-                    <option>Cadet Twos</option>
-                    <option>Cadet Ones</option>
-                    <option>Crusaders</option>
-                    <option>Leaders</option>
-                </select>
                 <table className="table" id="delete-table"></table>
                 <div className="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Delete</div>
                 <Link className="btn btn-light" to="/">Cancel</Link>

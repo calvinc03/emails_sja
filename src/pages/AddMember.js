@@ -33,7 +33,7 @@ class AddMember extends Component {
             return
         }
         
-        group = group.toLowerCase().replace(' ', '_')
+        group = group.toLowerCase()
         
         var request = new XMLHttpRequest();
         request.open('POST', 'https://sjarestapi.herokuapp.com/member/new', true);
@@ -63,8 +63,7 @@ class AddMember extends Component {
 
         request.setRequestHeader("Content-Type", "application/json");
         
-        console.log(JSON.stringify({group: group, members: [[name, email]], length: 1}));
-        request.send(JSON.stringify({group: group, members: [[name, email]], length: 1}));
+        request.send(JSON.stringify({members: [[name, email, group]], length: 1}));
     }
 
     updateValidity(type) {
@@ -109,37 +108,42 @@ class AddMember extends Component {
             <div className="new-member-page">
                 <h2 className="new-header">New Member</h2>
                 <form id="form">
-                    <select className="form-control" id='add-group'>
-                        <option>Juniors</option>
-                        <option>Cadet Twos</option>
-                        <option>Cadet Ones</option>
-                        <option>Crusaders</option>
-                        <option>Leaders</option>
-                    </select>
-                    <div className="form-group">
-                        <label htmlFor="inputName">Name</label>
-                        <input 
-                            type="text" 
-                            autoComplete="off"
-                            spellCheck="false"
-                            className={validName? "form-control" : "form-control outline-bad"} 
-                            id="inputName" 
-                            placeholder="Enter First and Last Name" 
-                            onBlur={() => this.updateValidity('name')}></input>
-                        <small id="nameError" className="my-form-text">Enter a valid name</small>
-                        <small id="nameUsed" className="my-form-text">This member already exists</small>
+                    <div className="form-row">
+                        <label className="col-4" htmlFor="inputName">Name</label>
+                        <label className="col-5" htmlFor="inputEmail">Email</label>
+                        <label className="col-3" htmlFor="inputGroup">Group</label>
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="inputEmail">Email</label>
-                        <input 
-                            type="email" 
-                            autoComplete="off"
-                            spellCheck="false"
-                            className={validEmail? "form-control" : "form-control outline-bad"} 
-                            id="inputEmail" 
-                            placeholder="Enter email" 
-                            onBlur={() => this.updateValidity('email')}></input>
-                        <small id="emailError" className="my-form-text">Enter a valid email address</small>
+                    <div className="form-row">
+                        <div className="form-group col-4">
+                            <input 
+                                type="text" 
+                                autoComplete="off"
+                                spellCheck="false"
+                                className={validName? "form-control" : "form-control outline-bad"} 
+                                id="inputName" 
+                                placeholder="Enter First and Last Name" 
+                                onBlur={() => this.updateValidity('name')}></input>
+                            <small id="nameError" className="my-form-text">Enter a valid name</small>
+                            <small id="nameUsed" className="my-form-text">This member already exists</small>
+                        </div>
+                        <div className="form-group col-5">
+                            <input 
+                                type="email" 
+                                autoComplete="off"
+                                spellCheck="false"
+                                className={validEmail? "form-control" : "form-control outline-bad"} 
+                                id="inputEmail" 
+                                placeholder="Enter email" 
+                                onBlur={() => this.updateValidity('email')}></input>
+                            <small id="emailError" className="my-form-text">Enter a valid email address</small>
+                        </div>
+                        <select className="form-control col-3" id='add-group'>
+                            <option>Junior</option>
+                            <option>Cadet Two</option>
+                            <option>Cadet One</option>
+                            <option>Crusader</option>
+                            <option>Leader</option>
+                        </select>
                     </div>
                 </form>
                 {/* <img className="add-img" src="https://img.icons8.com/material-outlined/64/000000/plus.png" onClick={() => this.addForm()}/> */}

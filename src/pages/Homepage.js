@@ -2,55 +2,111 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 
+var table_data = {'junior': '', 'cadet_two': '', 'cadet_one': '', 'crusader': '', 'leader': ''};
+
 class Homepage extends Component {
 
   componentDidMount() {
-    this.loadTableData('juniors');
-    this.loadTableData('cadet_twos');
-    this.loadTableData('cadet_ones');
-    this.loadTableData('crusaders');
-    this.loadTableData('leaders');
+    this.loadTableData();
+    this.loadHeaders();
   }
 
-  async loadTableData(group) {
-      var HeaderRequest = new XMLHttpRequest();
-      HeaderRequest.open('GET', `https://sjarestapi.herokuapp.com/table?group=${group}`, true);
+  async loadHeaders() {
+    var tableID = document.getElementById("home-table");
+    
+    var HeaderRequest = new XMLHttpRequest();
+      HeaderRequest.open('GET', `https://sjarestapi.herokuapp.com/table?group=juniors`, true);
       HeaderRequest.onreadystatechange = function() {
         if (HeaderRequest.readyState === XMLHttpRequest.DONE) {
+          document.getElementById("home-spinner").style.display = 'none';
           var headers = JSON.parse(HeaderRequest.responseText)['table'];
-          document.getElementById(`${group}-spinner`).style.display = 'none';
-          const tableheader = document.getElementById(`${group}-header`);
-          var headerhtml = '<tr><th scope="col">#</th>';
+
+          var headerhtml = '<thead><tr>';
           for (var i in headers) {
-            headerhtml += `<th scope="col">${headers[i]}</th>`;
+            // skips email address
+            if (i == 1) { continue; }
+            headerhtml += `<th scope="col">${headers[i].replace("_", " ")}</th>`;
           }
-          headerhtml += '</tr>';
-          tableheader.innerHTML = headerhtml;
+          headerhtml += '</tr></thead>';
+          table_data['headers'] = headerhtml;
+          tableID.innerHTML += headerhtml;
         }
       }
       HeaderRequest.send();
-      
 
-      var BodyRequest = new XMLHttpRequest();
-      BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all?group=${group}`, true);
-      BodyRequest.onreadystatechange = function() {
-        if (BodyRequest.readyState === XMLHttpRequest.DONE) {
-          var data = JSON.parse(BodyRequest.responseText)['members'];
-          const tablebody = document.getElementById(`${group}-body`);
-          var bodyhtml = '';
-          var num = 1
-          for (var j in data) {
-            var row = `<tr><th scope="row">${num}</th>`
-            for (var k in data[j]) {
+  }
+
+  async loadTableData(group) {
+    var tableID = document.getElementById("home-table");
+
+    var BodyRequest = new XMLHttpRequest();
+    BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all`, false);
+    BodyRequest.onreadystatechange = function() {
+      if (BodyRequest.readyState === XMLHttpRequest.DONE) {
+        var data = JSON.parse(BodyRequest.responseText)['members'];
+
+        var bodyhtml = '<tbody>';
+        for (var j in data) {
+          // starts row off with name and group and skips email
+          var row = `<tr><th>${data[j][0]}</th><th>${data[j][2]}</th>`
+          // iterate through the remaining columns
+          for (var k = 3; k < data[j].length; k++) {
               row += `<td>${data[j][k]}</td>`
-            }
-            bodyhtml += row + '</tr>'
-            num += 1
           }
-          tablebody.innerHTML = bodyhtml;
+          bodyhtml += row + `</tr>`
+          table_data[data[j][2].replace(" ", "_")] += row + `</tr>`;
         }
+        bodyhtml += "</tbody>";
+        tableID.innerHTML += bodyhtml;
       }
-      BodyRequest.send();
+    }
+    BodyRequest.send();
+  }
+
+  addButton(group) {
+    
+    var buttons = document.getElementById('btn-filters');
+
+    if (document.getElementById(group) !== null) return;
+
+    var newButton = document.createElement("div");
+    newButton.className = "btn filter-btn";
+    newButton.id = group;
+    newButton.innerHTML = `${group.replace('_', ' ')} <img id="${group}-cancel" src="https://img.icons8.com/ultraviolet/20/000000/cancel.png"/>`
+    buttons.appendChild(newButton);
+
+    document.getElementById(`${group}-cancel`).className = "cancel-img";
+    document.getElementById(`${group}-cancel`).addEventListener('click', function () {
+      this.removeButton(group);
+    }.bind(this))
+
+    var tableID = document.getElementById('home-table');
+    var tbody = '<tbody>';
+    for (var i = 0; i < buttons.children.length; i++) {
+      tbody += table_data[buttons.children[i].id];
+    }
+    tbody += '</tbody>';
+    tableID.innerHTML = table_data['headers'] + tbody; 
+  }
+
+  removeButton(group) {
+    var buttons = document.getElementById('btn-filters');
+    document.getElementById(`${group}`).remove();
+
+    var tableID = document.getElementById('home-table');
+
+    if (buttons.children.length === 0) {
+      tableID.innerHTML = table_data['headers'] + table_data['junior'] + 
+                          table_data['cadet_two'] + table_data['cadet_one'] + 
+                          table_data['crusader'] + table_data['leader'];
+    } else {
+        var tbody = '<tbody>';
+        for (var i = 0; i < buttons.children.length; i++) {
+          tbody += table_data[buttons.children[i].id];
+        }
+        tbody += '</tbody>';
+        tableID.innerHTML = table_data['headers'] + tbody;
+    }
   }
 
   render() {
@@ -61,52 +117,28 @@ class Homepage extends Component {
           <Link to="/delete" className="btn btn-danger">Delete</Link>
 
           <Link to="/column/delete" className="btn btn-danger columns">Delete Column</Link>
-          <Link to="/column/add" className="btn btn-success columns">Add Column</Link> 
-          <h2>Juniors</h2>
-          <Spinner animation="border" id="juniors-spinner" role="status">
+          <Link to="/column/add" className="btn btn-success columns">Add Column</Link>
+          <div className="filter">
+            <div className="btn-group">
+              <button type="button" className="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Filter
+              </button>
+              <div className="dropdown-menu">
+                <div className="dropdown-item" onClick={() => this.addButton('junior')}>Juniors</div>
+                <div className="dropdown-item" onClick={() => this.addButton('cadet_two')}>Cadet Twos</div>
+                <div className="dropdown-item" onClick={() => this.addButton('cadet_one')}>Cadet Ones</div>
+                <div className="dropdown-item" onClick={() => this.addButton('crusader')}>Crusaders</div>
+                <div className="dropdown-item" onClick={() => this.addButton('leader')}>Leaders</div>
+              </div>
+              <div id="btn-filters"></div>
+            </div>
+          </div>
+          <table className="table" id="home-table"></table>
+          <Spinner animation="border" id="home-spinner" role="status">
             <span className="sr-only">Loading...</span>
           </Spinner>
-          <table className="table">
-            <thead id="juniors-header"></thead>
-            <tbody id="juniors-body">
-            </tbody>
-          </table>
-          <h2>Cadet Twos</h2>
-          <Spinner animation="border" id="cadet_twos-spinner" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-          <table className="table">
-            <thead id="cadet_twos-header"></thead>
-            <tbody id="cadet_twos-body">
-            </tbody>
-          </table>
-          <h2>Cadet Ones</h2>
-          <Spinner animation="border" id="cadet_ones-spinner" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-          <table className="table">
-            <thead id="cadet_ones-header"></thead>
-            <tbody id="cadet_ones-body">
-            </tbody>
-          </table>
-          <h2>Crusaders</h2>
-          <Spinner animation="border" id="crusaders-spinner" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-          <table className="table">
-            <thead id="crusaders-header"></thead>
-            <tbody id="crusaders-body">
-            </tbody>
-          </table>
-          <h2>Leaders</h2>
-          <Spinner animation="border" id="leaders-spinner" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-          <table className="table">
-            <thead id="leaders-header"></thead>
-            <tbody id="leaders-body">
-            </tbody>
-          </table>
+          
+          <Link to="/email" className="btn btn-info">Send Emails</Link>
         </div>
     );
   }

@@ -15,8 +15,33 @@
   margin-bottom: 15px;
 }
 
+.filter {
+  display: block;
+}
+
+.btn-filters {
+  display: inline-block;
+}
+
+.btn-group {
+  display: block;
+}
+
+.cancel-img {
+  cursor: pointer;
+}
+
+.filter-btn {
+  background-color: rgb(187, 175, 175);
+  cursor: auto !important;
+}
+
 .table {
   margin-bottom: 30px;
+}
+
+thead {
+  background-color: rgb(86, 149, 221);
 }
 
 /* AddMemper css */
@@ -25,9 +50,7 @@
 }
 
 form {
-  max-width: 600px;
   margin-top: 50px;
-  position: relative;
 }
 
 .outline-bad {
@@ -75,8 +98,16 @@ form {
   margin-bottom: 0 !important;
 }
 
+.form-check-input-table {
+  margin-left: 0;
+}
+
 .delete-column {
   width: 20px;
   height: 20px;
   cursor: pointer;
+}
+
+.half-length {
+  width: 50%;
 }
