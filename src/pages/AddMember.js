@@ -33,7 +33,7 @@ class AddMember extends Component {
             } else continue;
         }
         
-        if (submitData.length != inputs.length - 1) return
+        if (submitData.length !== inputs.length - 1) return
 
         var request = new XMLHttpRequest();
         request.open('POST', 'https://sjarestapi.herokuapp.com/member/new', true);

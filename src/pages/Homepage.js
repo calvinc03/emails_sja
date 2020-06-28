@@ -23,9 +23,9 @@ class Homepage extends Component {
         var headers = JSON.parse(HeaderRequest.responseText)['table'];
 
         var headerhtml = '<thead><tr>';
-        for (var i in headers) {
+        for (var i = 0; i < headers.length; i++) {
           // skips email address
-          if (i == 1) { continue; }
+          if (i === 1) { continue; }
            headerhtml += `<th scope="col">${headers[i].replace("_", " ")}</th>`;
         }
         headerhtml += '</tr></thead>';

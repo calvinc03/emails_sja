@@ -17,15 +17,15 @@ class SendEmail extends Component {
         var displayTable = document.getElementById('send-table');
         
         var BodyRequest = new XMLHttpRequest();
-        BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all`, false);
+        BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all`, true);
         BodyRequest.onreadystatechange = function() {
             if (BodyRequest.readyState === XMLHttpRequest.DONE) {
                 var data = JSON.parse(BodyRequest.responseText)['members'];
                 var bodyhtml = '<tbody>';
                 var lastGroup = '';
                 var num = 0;
-                for (var j in data) {
-                    if (lastGroup != data[j][2]) {
+                for (var j = 0; j < data.length; j++) {
+                    if (lastGroup !== data[j][2]) {
                         num = 0;
                         lastGroup = data[j][2];
                     }
