@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 var header_names = []
 
 class SendEmail extends Component {
 
     componentDidMount() {
-        this.loadTableHeaders();
-        this.loadTableData();
+        if (Cookies.get('permissions') === 'Admin') {
+            this.loadTableData();
+            this.loadTableHeaders();
+        }
     }
 
     async loadTableData() {
@@ -43,6 +46,8 @@ class SendEmail extends Component {
             displayTable.innerHTML += bodyhtml;
             }
         }
+        const access_token = Cookies.get('access_token');
+        BodyRequest.setRequestHeader("token", access_token);
         BodyRequest.send();
     }
 
@@ -63,6 +68,8 @@ class SendEmail extends Component {
                 displayTable.innerHTML += headerhtml;
             }
         }
+        const access_token = Cookies.get('access_token');
+        HeaderRequest.setRequestHeader("token", access_token);
         HeaderRequest.send();
     }
 
@@ -139,12 +146,16 @@ class SendEmail extends Component {
         document.getElementById('send-button').style.pointerEvents='none';
         document.getElementById('send-cancel-button').style.pointerEvents ='none';
 
+        const access_token = Cookies.get('access_token');
+        request.setRequestHeader("token", access_token);
         request.setRequestHeader("Content-Type", "application/json");
-        
         request.send(JSON.stringify({members: submitData}));
     }
 
     render() {
+        if (Cookies.get('permissions') !== 'Admin') {
+            return (<h2>You do not have permissions to view this page</h2>)
+        }
         return (
             <div className="homepage">
                 

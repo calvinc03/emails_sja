@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import { Spinner } from 'react-bootstrap';
 
 var table_data = {'junior': '', 'cadet_two': '', 'cadet_one': '', 'crusader': '', 'leader': ''};
@@ -15,32 +16,33 @@ class Homepage extends Component {
     var tableID = document.getElementById("home-table");
     
     var HeaderRequest = new XMLHttpRequest();
-      HeaderRequest.open('GET', `https://sjarestapi.herokuapp.com/table?group=juniors`, true);
-      HeaderRequest.onreadystatechange = function() {
-        if (HeaderRequest.readyState === XMLHttpRequest.DONE) {
-          document.getElementById("home-spinner").style.display = 'none';
-          var headers = JSON.parse(HeaderRequest.responseText)['table'];
+    HeaderRequest.open('GET', `https://sjarestapi.herokuapp.com/table?group=juniors`, true);
+    HeaderRequest.onreadystatechange = function() {
+      if (HeaderRequest.readyState === XMLHttpRequest.DONE) {
+        document.getElementById("home-spinner").style.display = 'none';
+        var headers = JSON.parse(HeaderRequest.responseText)['table'];
 
-          var headerhtml = '<thead><tr>';
-          for (var i in headers) {
-            // skips email address
-            if (i == 1) { continue; }
-            headerhtml += `<th scope="col">${headers[i].replace("_", " ")}</th>`;
-          }
-          headerhtml += '</tr></thead>';
-          table_data['headers'] = headerhtml;
-          tableID.innerHTML += headerhtml;
+        var headerhtml = '<thead><tr>';
+        for (var i in headers) {
+          // skips email address
+          if (i == 1) { continue; }
+           headerhtml += `<th scope="col">${headers[i].replace("_", " ")}</th>`;
         }
+        headerhtml += '</tr></thead>';
+        table_data['headers'] = headerhtml;
+        tableID.innerHTML += headerhtml;
       }
-      HeaderRequest.send();
-
+    }
+    const access_token = Cookies.get('access_token');
+    HeaderRequest.setRequestHeader("token", access_token);
+    HeaderRequest.send();
   }
 
   async loadTableData(group) {
     var tableID = document.getElementById("home-table");
 
     var BodyRequest = new XMLHttpRequest();
-    BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all`, false);
+    BodyRequest.open('GET', `https://sjarestapi.herokuapp.com/member/all`, true);
     BodyRequest.onreadystatechange = function() {
       if (BodyRequest.readyState === XMLHttpRequest.DONE) {
         var data = JSON.parse(BodyRequest.responseText)['members'];
@@ -60,6 +62,8 @@ class Homepage extends Component {
         tableID.innerHTML += bodyhtml;
       }
     }
+    const access_token = Cookies.get('access_token');
+    BodyRequest.setRequestHeader("token", access_token);
     BodyRequest.send();
   }
 
@@ -110,14 +114,15 @@ class Homepage extends Component {
   }
 
   render() {
+    const permissions = Cookies.get('permissions');
     return (
         <div className="homepage">
-          <Link to="/new" className="btn btn-info">Add</Link>
-          <Link to="/edit" className="btn btn-warning">Edit</Link>
-          <Link to="/delete" className="btn btn-danger">Delete</Link>
+          <Link to="/new" className={permissions === 'Admin'? "btn btn-info" : "remove"}>Add</Link>
+          <Link to="/edit" className={permissions === 'Admin'? "btn btn-warning" : "remove"}>Edit</Link>
+          <Link to="/delete" className={permissions === 'Admin'? "btn btn-danger" : "remove"}>Delete</Link>
 
-          <Link to="/column/delete" className="btn btn-danger columns">Delete Column</Link>
-          <Link to="/column/add" className="btn btn-success columns">Add Column</Link>
+          <Link to="/column/delete" className={permissions === 'Admin'? "btn btn-danger columns" : "remove"}>Delete Column</Link>
+          <Link to="/column/add" className={permissions === 'Admin'? "btn btn-success columns" : "remove"}>Add Column</Link>
           <div className="filter">
             <div className="btn-group">
               <button type="button" className="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -138,7 +143,7 @@ class Homepage extends Component {
             <span className="sr-only">Loading...</span>
           </Spinner>
           
-          <Link to="/email" className="btn btn-info">Send Emails</Link>
+          <Link to="/email" className={permissions === 'Admin'? "btn btn-info" : "remove"}>Send Emails</Link>
         </div>
     );
   }

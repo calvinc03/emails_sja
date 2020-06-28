@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
 
 class EditMember extends Component {
     
 
     componentDidMount() {
-        this.loadTableData();
+        if (Cookies.get('permissions') === 'Admin') {
+            this.loadTableData();
+        } 
     }
 
     async loadTableData() {
@@ -26,6 +28,8 @@ class EditMember extends Component {
                 displayTable.innerHTML += headerhtml;
             }
         }
+        const access_token = Cookies.get('access_token');
+        HeaderRequest.setRequestHeader("token", access_token);
         HeaderRequest.send();
 
         var BodyRequest = new XMLHttpRequest();
@@ -54,6 +58,7 @@ class EditMember extends Component {
             displayTable.innerHTML += bodyhtml;
             }
         }
+        BodyRequest.setRequestHeader("token", access_token);
         BodyRequest.send();
     }
 
@@ -93,11 +98,17 @@ class EditMember extends Component {
         document.getElementById('edit-mem-spinner').style.display = 'block';
         document.getElementById('make-changes-button').style.pointerEvents='none';
         document.getElementById('edit-cancel-button').style.pointerEvents ='none';
+
+        const access_token = Cookies.get('access_token');
+        xhr.setRequestHeader("token", access_token);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(JSON.stringify({data: submitData, length: submitData.length}));
     }
 
     render() {
+        if (Cookies.get('permissions') !== 'Admin') {
+            return (<h2>You do not have permissions to view this page</h2>)
+        }
         return (
             <div className="homepage">
                 <table className="table" id="edit-table"></table>

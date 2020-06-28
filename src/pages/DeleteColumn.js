@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 class DeleteColumn extends Component {
     
 
     componentDidMount() {
-        this.loadTableData();
+        if (Cookies.get('permissions') === 'Admin') {
+            this.loadTableData();
+        } 
     }
 
     async loadTableData() {
@@ -33,6 +36,8 @@ class DeleteColumn extends Component {
                 displayTable.innerHTML += headerhtml;
             }
         };
+        const access_token = Cookies.get('access_token');
+        HeaderRequest.setRequestHeader("token", access_token);
         HeaderRequest.send();
 
         var BodyRequest = new XMLHttpRequest();
@@ -52,6 +57,7 @@ class DeleteColumn extends Component {
             displayTable.innerHTML += bodyhtml;
             }
         }
+        BodyRequest.setRequestHeader("token", access_token);
         BodyRequest.send();
     }
 
@@ -85,11 +91,16 @@ class DeleteColumn extends Component {
         document.getElementById('delete-button').style.pointerEvents='none';
         document.getElementById('delete-cancel-button').style.pointerEvents ='none';
         
+        const access_token = Cookies.get('access_token');
+        xhr.setRequestHeader("token", access_token);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(JSON.stringify({columns: submitData}));
     }
 
     render() {
+        if (Cookies.get('permissions') !== 'Admin') {
+            return (<h2>You do not have permissions to view this page</h2>)
+        }
         return (
             <div className="homepage">
                 <table className="table" id="delete-table"></table>
